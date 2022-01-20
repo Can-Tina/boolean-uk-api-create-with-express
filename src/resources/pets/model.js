@@ -44,4 +44,34 @@ function Pet() {
   });
 }
 
-module.exports = Pet;
+async function createPet(petData) {
+  const createOneSQL = `
+    INSERT INTO pets 
+      (name, age, type, breed, microchip) 
+    VALUES 
+      ($1,$2,$3,$4,$5) 
+    RETURNING *;`;
+
+  let createResult = {}
+
+  await db
+    .query(createOneSQL, [petData.name , petData.age, petData.type, petData.breed, new Boolean(petData.microchip)])
+    .then(result => createResult = result.rows[0])
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not create pet: " + error.message,
+          petToCreate: petData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+
+module.exports = {
+  Pet,
+  createPet
+};

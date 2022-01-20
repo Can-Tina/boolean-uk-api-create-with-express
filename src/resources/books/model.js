@@ -44,4 +44,159 @@ function Book() {
   });
 }
 
-module.exports = Book;
+async function createNewBook(bookData) {
+  const createOneSQL = `
+    INSERT INTO books 
+      (title, type, author, topic, publicationDate) 
+    VALUES 
+      ($1,$2,$3,$4,$5) 
+    RETURNING *;`;
+
+  let createResult = {}
+
+  await db
+    .query(createOneSQL, [bookData.title, bookData.type, bookData.author, bookData.topic, new Date(bookData.publicationDate)])
+    .then(result => createResult = result.rows[0])
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not create book: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getAllFictionBooks() {
+  const getAllFictionSQL = `
+  SELECT *
+  FROM books
+  WHERE type = 'Fiction'`;
+
+  let createResult = {}
+
+  await db
+    .query(getAllFictionSQL)
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getAllNonFictionBooks() {
+  const getAllNonFictionSQL = `
+  SELECT *
+  FROM books
+  WHERE type = 'Non-Fiction'`;
+
+  let createResult = {}
+
+  await db
+    .query(getAllNonFictionSQL)
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getFictionBooksByTopic(topic) {
+  const getFictionByTopicSQL = `
+  SELECT *
+  FROM books
+  WHERE type = 'Fiction' AND topic = $1`;
+
+  let createResult = {}
+
+  await db
+    .query(getFictionByTopicSQL, [topic])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getNonFictionBooksByTopic(topic) {
+  const getNonFictionByTopicSQL = `
+  SELECT *
+  FROM books
+  WHERE type = 'Non-Fiction' AND topic = $1`;
+
+  let createResult = {}
+
+  await db
+    .query(getNonFictionByTopicSQL, [topic])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getBooksByAuthor(author) {
+  const getBooksByAuthorSQL = `
+  SELECT *
+  FROM books
+  WHERE author = $1
+  ORDER BY publicationdate DESC`;
+
+  let createResult = {}
+
+  await db
+    .query(getBooksByAuthorSQL, [author])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+module.exports = {
+  Book,
+  createNewBook,
+  getAllFictionBooks,
+  getFictionBooksByTopic,
+  getAllNonFictionBooks,
+  getNonFictionBooksByTopic,
+  getBooksByAuthor
+};
