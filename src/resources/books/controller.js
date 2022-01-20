@@ -40,7 +40,7 @@ async function getNonFictionByTopic(req, res) {
   const topicToGet = req.params.topic
 
   const thisRes = await getNonFictionBooksByTopic(topicToGet);
-  console.log("Getting Fiction By Topic")
+  console.log("Getting NonFiction By Topic")
   return res.json({ data: thisRes });
 }
 

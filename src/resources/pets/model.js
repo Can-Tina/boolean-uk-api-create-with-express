@@ -44,7 +44,7 @@ function Pet() {
   });
 }
 
-async function createPet(petData) {
+async function createNewPet(petData) {
   const createOneSQL = `
     INSERT INTO pets 
       (name, age, type, breed, microchip) 
@@ -70,8 +70,129 @@ async function createPet(petData) {
   return createResult;
 }
 
+async function getPetTypesList() {
+  const getPetTypesListSQL = `
+  SELECT DISTINCT type
+  FROM pets`;
+
+  let createResult = {}
+
+  await db
+    .query(getPetTypesListSQL)
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getAllPetsByType(type) {
+  const getAllPetsByTypeSQL = `
+  SELECT *
+  FROM pets
+  WHERE type = $1`;
+
+  let createResult = {}
+
+  await db
+    .query(getAllPetsByTypeSQL, [type])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getAllPetsByTypeAndBreed(type, breed) {
+  const getAllPetsByTypeAndBreedSQL = `
+  SELECT *
+  FROM pets
+  WHERE type = $1 AND breed = $2`;
+
+  let createResult = {}
+
+  await db
+    .query(getAllPetsByTypeAndBreedSQL, [type, breed])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getNoMicrochipList() {
+  const getNoMicrochipListSQL = `
+  SELECT *
+  FROM pets
+  WHERE microchip = false`;
+
+  let createResult = {}
+
+  await db
+    .query(getNoMicrochipListSQL)
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function getAllPetsByTypeAndMicrochip(type) {
+  const getAllPetsByTypeAndMicrochipSQL = `
+  SELECT *
+  FROM pets
+  WHERE type = $1 AND microchip = false`;
+
+  let createResult = {}
+
+  await db
+    .query(getAllPetsByTypeAndMicrochipSQL, [type])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
 
 module.exports = {
   Pet,
-  createPet
+  createNewPet,
+  getPetTypesList,
+  getAllPetsByType,
+  getAllPetsByTypeAndBreed,
+  getNoMicrochipList,
+  getAllPetsByTypeAndMicrochip
 };
