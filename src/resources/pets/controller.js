@@ -1,4 +1,15 @@
-const { Pet, createNewPet, getPetTypesList, getAllPetsByType, getAllPetsByTypeAndBreed, getNoMicrochipList, getAllPetsByTypeAndMicrochip } = require("./model");
+const {
+  Pet,
+  createNewPet,
+  getPetTypesList,
+  getAllPetsByType,
+  getAllPetsByTypeAndBreed,
+  getNoMicrochipList,
+  getAllPetsByTypeAndMicrochip,
+  updatePetId,
+  updatePetName,
+  deletePetId
+} = require("./model");
 
 //Pet().init();
 
@@ -49,11 +60,41 @@ async function getPetByTypeAndMicrochip(req, res) {
   return res.json({ data: thisRes });
 }
 
+async function updatePetById(req, res) {
+  const petToUpdate = {
+    id: req.params.id,
+    ...req.body
+  }
+
+  const thisRes = await updatePetId(petToUpdate, res);
+  return res.json({ data: thisRes });
+}
+
+async function updatePetByName(req, res) {
+  const petToUpdate = {
+    name: req.params.name,
+    ...req.body
+  }
+
+  const thisRes = await updatePetName(petToUpdate, res);
+  return res.json({ data: thisRes });
+}
+
+async function deletePetById(req, res) {
+  const petToDelete = req.params.id
+
+  const thisRes = await deletePetId(petToDelete);
+  return res.json({ data: thisRes });
+}
+
 module.exports = {
   createPet,
   getAllPetTypes,
   getPetByType,
   getPetByTypeAndBreed,
   getNoMicrochip,
-  getPetByTypeAndMicrochip
+  getPetByTypeAndMicrochip,
+  updatePetById,
+  updatePetByName,
+  deletePetById
 };

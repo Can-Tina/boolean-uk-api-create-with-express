@@ -191,6 +191,79 @@ async function getBooksByAuthor(author) {
   return createResult;
 }
 
+async function updateBookId(bookData) {
+  const updateBookIdSQL = `
+    UPDATE books  
+    SET title = $1
+    WHERE id = $2
+    RETURNING *;`;
+
+  let createResult = {}
+
+  await db
+    .query(updateBookIdSQL, [bookData.title, bookData.id])
+    .then(result => createResult = result.rows[0])
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not create book: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function updateBookTitle(bookData) {
+  const updateBookTitleSQL = `
+    UPDATE books  
+    SET author = $1
+    WHERE title = $2
+    RETURNING *;`;
+
+  let createResult = {}
+
+  await db
+    .query(updateBookTitleSQL, [bookData.author, bookData.title])
+    .then(result => createResult = result.rows[0])
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not create book: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function deleteBookId(id) {
+  const deleteBookIdSQL = `
+  DELETE FROM books
+  WHERE id = $1`;
+
+  let createResult = {}
+
+  await db
+    .query(deleteBookIdSQL, [id])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          bookToCreate: bookData,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
 module.exports = {
   Book,
   createNewBook,
@@ -198,5 +271,8 @@ module.exports = {
   getFictionBooksByTopic,
   getAllNonFictionBooks,
   getNonFictionBooksByTopic,
-  getBooksByAuthor
+  getBooksByAuthor,
+  updateBookId,
+  updateBookTitle,
+  deleteBookId
 };

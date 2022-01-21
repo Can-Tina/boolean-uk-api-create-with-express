@@ -186,6 +186,75 @@ async function getAllPetsByTypeAndMicrochip(type) {
   return createResult;
 }
 
+async function updatePetId(petData) {
+  const updatePetIdSQL = `
+    UPDATE pets  
+    SET name = $1
+    WHERE id = $2
+    RETURNING *;`;
+
+  let createResult = {}
+
+  await db
+    .query(updatePetIdSQL, [petData.name, petData.id])
+    .then(result => createResult = result.rows[0])
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not create book: " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function updatePetName(petData) {
+  const updatePetNameSQL = `
+    UPDATE pets  
+    SET breed = $1
+    WHERE name = $2
+    RETURNING *;`;
+
+  let createResult = {}
+
+  await db
+    .query(updatePetNameSQL, [petData.breed, petData.name])
+    .then(result => createResult = result.rows[0])
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not create book: " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
+
+async function deletePetId(id) {
+  const deletePetIdSQL = `
+  DELETE FROM pets
+  WHERE id = $1`;
+
+  let createResult = {}
+
+  await db
+    .query(deletePetIdSQL, [id])
+    .then(result => createResult = result.rows)
+    .catch(error => {
+      createResult = {
+        error: {
+          message: "DB error, could not get fiction: " + error.message,
+          code: error.code
+        }
+      }
+    });
+
+  return createResult;
+}
 
 module.exports = {
   Pet,
@@ -194,5 +263,8 @@ module.exports = {
   getAllPetsByType,
   getAllPetsByTypeAndBreed,
   getNoMicrochipList,
-  getAllPetsByTypeAndMicrochip
+  getAllPetsByTypeAndMicrochip,
+  updatePetId,
+  updatePetName,
+  deletePetId
 };
